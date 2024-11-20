@@ -270,10 +270,10 @@ if not SKIP_CUDA_BUILD and not IS_ROCM:
                 "csrc/flash_attn/src/flash_fwd_split_hdim256_bf16_causal_sm80.cu",
             ],
             extra_compile_args={
-                "cxx": ["-O3", "-std=c++17"] + generator_flag,
+                "cxx": ["-O0", "-std=c++17"] + generator_flag,
                 "nvcc": append_nvcc_threads(
                     [
-                        "-O3",
+                        "-O0",
                         "-std=c++17",
                         "-U__CUDA_NO_HALF_OPERATORS__",
                         "-U__CUDA_NO_HALF_CONVERSIONS__",
@@ -285,12 +285,12 @@ if not SKIP_CUDA_BUILD and not IS_ROCM:
                         # "--ptxas-options=-v",
                         # "--ptxas-options=-O2",
                         # "-lineinfo",
-                        # "-DFLASHATTENTION_DISABLE_BACKWARD",
-                        # "-DFLASHATTENTION_DISABLE_DROPOUT",
-                        # "-DFLASHATTENTION_DISABLE_ALIBI",
-                        # "-DFLASHATTENTION_DISABLE_SOFTCAP",
-                        # "-DFLASHATTENTION_DISABLE_UNEVEN_K",
-                        # "-DFLASHATTENTION_DISABLE_LOCAL",
+                        "-DFLASHATTENTION_DISABLE_BACKWARD",
+                        "-DFLASHATTENTION_DISABLE_DROPOUT",
+                        "-DFLASHATTENTION_DISABLE_ALIBI",
+                        "-DFLASHATTENTION_DISABLE_SOFTCAP",
+                        "-DFLASHATTENTION_DISABLE_UNEVEN_K",
+                        "-DFLASHATTENTION_DISABLE_LOCAL",
                     ]
                     + generator_flag
                     + cc_flag
@@ -358,7 +358,7 @@ elif not SKIP_CUDA_BUILD and IS_ROCM:
                        "csrc/flash_attn_ck/mha_varlen_bwd.cu",
                        "csrc/flash_attn_ck/mha_varlen_fwd.cu"] + glob.glob(f"build/fmha_*wd*.cu")
 
-    cc_flag += ["-O3","-std=c++17",
+    cc_flag += ["-O0","-std=c++17",
                 "-DCK_TILE_FMHA_FWD_FAST_EXP2=1",
                 "-fgpu-flush-denormals-to-zero",
                 "-DCK_ENABLE_BF16",
@@ -370,7 +370,7 @@ elif not SKIP_CUDA_BUILD and IS_ROCM:
                 "-DCK_ENABLE_INT8",
                 "-DCK_USE_XDL",
                 "-DUSE_PROF_API=1",
-                # "-DFLASHATTENTION_DISABLE_BACKWARD",
+                "-DFLASHATTENTION_DISABLE_BACKWARD",
                 "-D__HIP_PLATFORM_HCC__=1"]
 
     cc_flag += [f"-DCK_TILE_FLOAT_TO_BFLOAT16_DEFAULT={os.environ.get('CK_TILE_FLOAT_TO_BFLOAT16_DEFAULT', 3)}"]
@@ -388,7 +388,7 @@ elif not SKIP_CUDA_BUILD and IS_ROCM:
         cc_flag += ["-mllvm", "-amdgpu-coerce-illegal-types=1"]
 
     extra_compile_args = {
-        "cxx": ["-O3", "-std=c++17"] + generator_flag,
+        "cxx": ["-O0", "-std=c++17"] + generator_flag,
         "nvcc": cc_flag + generator_flag,
     }
 
